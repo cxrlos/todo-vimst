@@ -1,0 +1,37 @@
+# Lua compiled files
+*.luac
+
+# MacOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Neovim swap files
+*.swp
+*.swo
+
+# Neovim undo files
+*.un~
+
+# Neovim backup files
+*~
+
+# Lua package manager (LuaRocks) files
+/lua_modules/
+/.luarocks/
+
+# Build output
+/build/
+
+# Dependencies
+/deps/
+
+# Log files
+*.log
+
+# Environment variables
+.env
+
+# Any compiled binaries or libraries
+*.so
+*.dylib
