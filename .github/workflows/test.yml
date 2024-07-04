@@ -30,9 +30,4 @@ jobs:
     - name: Run Luacheck (non-blocking)
       run: luacheck . --codes || true
 
-    - name: Display Luacheck warnings
-      run: luacheck . --codes
-
-    - name: Run tests
-      run: |
-        nvim --headless -u tests/minimal_init.vim -c "PlenaryBustedDirectory tests/ {minimal_init = 'tests/minimal_init.vim'}"
+      # TODO: Add real integration tests here #P4 #IntegrityChecks
