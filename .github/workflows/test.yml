@@ -27,8 +27,11 @@ jobs:
         luarocks install luassert
         luarocks install luacheck
 
-    - name: Run Luacheck
-      run: luacheck .
+    - name: Run Luacheck (non-blocking)
+      run: luacheck . --codes || true
+
+    - name: Display Luacheck warnings
+      run: luacheck . --codes
 
     - name: Run tests
       run: |
