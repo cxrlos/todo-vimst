@@ -33,4 +33,23 @@ function M.create_task(task)
   return vim.fn.json_decode(response.body)
 end
 
+function M.delete_task(task_id)
+  local token = config.options.token
+  if not token then
+    error("Todoist API token not set. Use :TodoVimstSetup to configure.")
+  end
+
+  local response = curl.delete(API_BASE_URL .. "/tasks/" .. task_id, {
+    headers = {
+      Authorization = "Bearer " .. token,
+    },
+  })
+
+  if response.status ~= 204 then
+    error("API request failed: " .. response.body)
+  end
+
+  return true
+end
+
 return M
