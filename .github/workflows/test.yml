@@ -1,0 +1,33 @@
+name: Run Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    env:
+      TODOIST_API_TOKEN: ${{ secrets.TODOIST_API_TOKEN }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Lua
+      uses: leafo/gh-actions-lua@v8
+      with:
+        luaVersion: "5.1"
+
+    - name: Setup Luarocks
+      uses: leafo/gh-actions-luarocks@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y neovim
+        luarocks install luassert
+        luarocks install luacheck
+
+    - name: Run Luacheck (non-blocking)
+      run: luacheck . --codes || true
+
+      # TODO: Add real integration tests here #P4 #IntegrityChecks
