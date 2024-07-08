@@ -17,11 +17,20 @@ Turn your TODOs into Todoist tasks without leaving Neovim! Because productivity 
 
 ## 🛠️ Installation
 
-Using [packer.nvim](https://github.com/wbthomason/packer.nvim):
+You can install todo-vimst using your preferred Vim package manager. Here are examples for some popular package managers:
+
+### Using [vim-plug](https://github.com/junegunn/vim-plug):
+
+```vim
+Plug 'yourusername/todo-vimst', { 'tag': 'v1.2.3' }
+```
+
+### Using [packer.nvim](https://github.com/wbthomason/packer.nvim):
 
 ```lua
 use {
   'yourusername/todo-vimst',
+  tag = 'v1.2.3',
   requires = {'nvim-lua/plenary.nvim'},
   config = function()
     require('todo-vimst').setup({
@@ -30,6 +39,29 @@ use {
   end
 }
 ```
+
+### Using [lazy.nvim](https://github.com/folke/lazy.nvim):
+
+```lua
+{
+  'yourusername/todo-vimst',
+  version = 'v1.2.3',
+  dependencies = { 'nvim-lua/plenary.nvim' },
+  config = function()
+    require('todo-vimst').setup({
+      -- Your configuration options here
+    })
+  end
+}
+```
+
+### Using [Vundle](https://github.com/VundleVim/Vundle.vim):
+
+```vim
+Plugin 'yourusername/todo-vimst', { 'tag': 'v1.2.3' }
+```
+
+Replace `'v1.2.3'` with the latest version or the specific version you want to use.
 
 ## ⚙️ Configuration
 
@@ -101,6 +133,20 @@ that spans multiple lines
 ```
 
 todo-vimst now supports file type-specific comment parsing, ensuring that the correct comment syntax is used for each programming language. It recognizes common file types such as Python, C, Java, JavaScript, Lua, and more.
+
+## 📊 Versioning
+
+todo-vimst follows semantic versioning (SemVer) principles. Our version numbers follow the format of MAJOR.MINOR.PATCH:
+
+- MAJOR version for incompatible API changes,
+- MINOR version for adding functionality in a backwards compatible manner, and
+- PATCH version for backwards compatible bug fixes.
+
+You can find all available versions in the [Releases](https://github.com/yourusername/todo-vimst/releases) section of our GitHub repository.
+
+To use a specific version, specify the version tag when installing with your package manager (as shown in the Installation section).
+
+We recommend using the latest stable release for the best experience. However, if you encounter any issues, you can always roll back to a previous version.
 
 ## 🐛 Troubleshooting
 

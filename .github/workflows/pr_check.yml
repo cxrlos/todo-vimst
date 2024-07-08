@@ -1,0 +1,30 @@
+name: PR Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+jobs:
+  check_labels:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Check for version tag
+        id: check_tag
+        run: |
+          VERSION_TAGS=$(jq -r '.version_tags | keys[]' version_info.json)
+          LABELS=$(jq -r '.[].name' <<< '${{ toJson(github.event.pull_request.labels) }}')
+          
+          MATCHING_TAGS=$(echo "$LABELS" | grep -E "$(echo $VERSION_TAGS | sed 's/ /|/g')" || true)
+          MATCHING_TAG_COUNT=$(echo "$MATCHING_TAGS" | wc -l)
+          
+          if [ "$MATCHING_TAG_COUNT" -eq 0 ]; then
+            echo "Error: PR must have exactly one version tag"
+            exit 1
+          elif [ "$MATCHING_TAG_COUNT" -gt 1 ]; then
+            echo "Error: PR must have only one version tag, but it has multiple"
+            exit 1
+          else
+            echo "PR has the correct number of version tags"
+          fi
