@@ -1,0 +1,8 @@
+{
+  "current_version": "0.1.0",
+  "version_tags": {
+    "Major Version": "major",
+    "Minor Version": "minor",
+    "Bug Fix": "sub"
+  }
+}
