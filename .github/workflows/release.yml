@@ -1,0 +1,95 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install semver
+
+      - name: Check for version tag
+        id: check_tag
+        run: |
+          PR_NUMBER=$(git log -1 --pretty=%B | grep -oP '#\K\d+')
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No PR number found in commit message"
+            exit 1
+          fi
+          
+          LABELS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" | \
+            jq -r '.[].name')
+          
+          VERSION_TAGS=$(python -c "import json; print(' '.join(json.load(open('version_info.json'))['version_tags'].keys()))")
+          MATCHING_TAGS=$(echo "$LABELS" | grep -E "$(echo $VERSION_TAGS | sed 's/ /|/g')")
+          
+          if [ $(echo "$MATCHING_TAGS" | wc -l) -ne 1 ]; then
+            echo "Error: PR must have exactly one version tag"
+            exit 1
+          fi
+          
+          echo "::set-output name=version_tag::$MATCHING_TAGS"
+
+      - name: Update version
+        id: update_version
+        run: |
+          import json
+          import semver
+
+          with open('version_info.json', 'r') as f:
+              version_info = json.load(f)
+
+          current_version = version_info['current_version']
+          version_tag = '${{ steps.check_tag.outputs.version_tag }}'
+          version_type = version_info['version_tags'][version_tag]
+
+          new_version = semver.VersionInfo.parse(current_version)
+          if version_type == 'major':
+              new_version = new_version.bump_major()
+          elif version_type == 'minor':
+              new_version = new_version.bump_minor()
+          elif version_type == 'sub':
+              new_version = new_version.bump_patch()
+
+          version_info['current_version'] = str(new_version)
+
+          with open('version_info.json', 'w') as f:
+              json.dump(version_info, f, indent=2)
+
+          print(f"::set-output name=new_version::v{new_version}")
+        shell: python
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.update_version.outputs.new_version }}
+          release_name: Release ${{ steps.update_version.outputs.new_version }}
+          body: |
+            ${{ github.event.head_commit.message }}
+          draft: false
+          prerelease: false
+
+      - name: Commit version update
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add version_info.json
+          git commit -m "Bump version to ${{ steps.update_version.outputs.new_version }}"
+          git push
