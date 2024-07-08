@@ -21,8 +21,8 @@ jobs:
       - name: Install dependencies
         run: pip install semver
 
-      - name: Check for version tag
-        id: check_tag
+      - name: Get version tag from PR
+        id: get_tag
         run: |
           PR_NUMBER=$(git log -1 --pretty=%B | grep -oP '#\K\d+')
           if [ -z "$PR_NUMBER" ]; then
@@ -34,15 +34,10 @@ jobs:
             "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" | \
             jq -r '.[].name')
           
-          VERSION_TAGS=$(python -c "import json; print(' '.join(json.load(open('version_info.json'))['version_tags'].keys()))")
-          MATCHING_TAGS=$(echo "$LABELS" | grep -E "$(echo $VERSION_TAGS | sed 's/ /|/g')")
+          VERSION_TAGS=$(jq -r '.version_tags | keys[]' version_info.json)
+          MATCHING_TAG=$(echo "$LABELS" | grep -E "$(echo $VERSION_TAGS | sed 's/ /|/g')")
           
-          if [ $(echo "$MATCHING_TAGS" | wc -l) -ne 1 ]; then
-            echo "Error: PR must have exactly one version tag"
-            exit 1
-          fi
-          
-          echo "::set-output name=version_tag::$MATCHING_TAGS"
+          echo "::set-output name=version_tag::$MATCHING_TAG"
 
       - name: Update version
         id: update_version
@@ -54,7 +49,7 @@ jobs:
               version_info = json.load(f)
 
           current_version = version_info['current_version']
-          version_tag = '${{ steps.check_tag.outputs.version_tag }}'
+          version_tag = '${{ steps.get_tag.outputs.version_tag }}'
           version_type = version_info['version_tags'][version_tag]
 
           new_version = semver.VersionInfo.parse(current_version)
