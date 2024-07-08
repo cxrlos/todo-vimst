@@ -4,7 +4,7 @@ local keystore = require('todo-vimst.keystore')
 M.options = {
   token = nil,
   project_id = nil,
-  log_level = "info",
+  log_level = "error",
   create_on_save = false,
 }
 

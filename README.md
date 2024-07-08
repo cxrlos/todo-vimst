@@ -9,7 +9,7 @@ Turn your TODOs into Todoist tasks without leaving Neovim! Because productivity 
 ## 🌟 Features
 
 - 📝 Create Todoist tasks from TODO comments in your code
-- 🎨 Support for multiple comment styles (`//`, `#`, `--`, `%`)
+- 🎨 Support for multiple comment styles based on file type
 - 🏷️ Add priorities and custom labels with simple tags
 - 🔄 Optional auto-creation of tasks on file save
 - 🚦 Configurable logging levels for debugging
@@ -44,6 +44,16 @@ require('todo-vimst').setup({
 })
 ```
 
+## 🔐 Token Security
+
+todo-vimst stores your Todoist API token locally using a basic encryption method. While this provides a layer of security, it is not foolproof. Please be aware of the following:
+
+- The token is stored in an encrypted format in your home directory.
+- The encryption used is a simple XOR cipher, which is not highly secure.
+- For maximum security, consider using a password manager or environment variables instead.
+
+**Disclaimer**: The current token storage method is basic and should not be considered fully secure. Use at your own discretion.
+
 ## 🚀 Usage
 
 1. Set up your Todoist API token (if not provided in the config):
@@ -63,7 +73,6 @@ require('todo-vimst').setup({
    ```
    :TodoVimstCreateTasks
    ```
-
    Or let it happen automatically on save if you've set `create_on_save = true`!
 
 ## 🏷️ Priorities and Labels
@@ -83,7 +92,15 @@ require('todo-vimst').setup({
 
 -- TODO: Document temporal experiments
 -- This creates a low-priority task (default P4) with no labels
+
+'''
+TODO: This is a multi-line task
+that spans multiple lines
+'''
+# This creates a single task with the content "This is a multi-line task that spans multiple lines"
 ```
+
+todo-vimst now supports file type-specific comment parsing, ensuring that the correct comment syntax is used for each programming language. It recognizes common file types such as Python, C, Java, JavaScript, Lua, and more.
 
 ## 🐛 Troubleshooting
 
