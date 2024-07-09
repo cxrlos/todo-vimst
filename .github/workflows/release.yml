@@ -13,6 +13,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install semver
+
       - name: Get version tag from PR
         id: get_tag
         run: |
@@ -22,49 +30,49 @@ jobs:
             exit 1
           fi
           
-          LABELS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          LABELS=$(curl -s -H "Authorization: token ${{ secrets.PAT }}" \
             "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" | \
             jq -r '.[].name')
           
-          VERSION_TAGS=("major-version" "minor-version" "bug-fix")
-          MATCHING_TAG=$(echo "$LABELS" | grep -E "$(IFS=\|; echo "${VERSION_TAGS[*]}")")
+          VERSION_TAGS=$(jq -r '.version_tags | keys[]' version_info.json)
+          MATCHING_TAG=$(echo "$LABELS" | grep -E "$(echo $VERSION_TAGS | sed 's/ /|/g')")
           
           echo "::set-output name=version_tag::$MATCHING_TAG"
 
       - name: Update version
         id: update_version
         run: |
-          current_version="${{ vars.CURRENT_VERSION }}"
-          version_tag="${{ steps.get_tag.outputs.version_tag }}"
-          
-          IFS='.' read -ra VERSION_PARTS <<< "${current_version#v}"
-          major=${VERSION_PARTS[0]}
-          minor=${VERSION_PARTS[1]}
-          patch=${VERSION_PARTS[2]}
-          
-          case "$version_tag" in
-            "major-version")
-              major=$((major + 1))
-              minor=0
-              patch=0
-              ;;
-            "minor-version")
-              minor=$((minor + 1))
-              patch=0
-              ;;
-            "bug-fix")
-              patch=$((patch + 1))
-              ;;
-          esac
-          
-          new_version="v${major}.${minor}.${patch}"
-          echo "::set-output name=new_version::${new_version}"
+          import json
+          import semver
+
+          with open('version_info.json', 'r') as f:
+              version_info = json.load(f)
+
+          current_version = version_info['current_version']
+          version_tag = '${{ steps.get_tag.outputs.version_tag }}'
+          version_type = version_info['version_tags'][version_tag]
+
+          new_version = semver.VersionInfo.parse(current_version)
+          if version_type == 'major':
+              new_version = new_version.bump_major()
+          elif version_type == 'minor':
+              new_version = new_version.bump_minor()
+          elif version_type == 'sub':
+              new_version = new_version.bump_patch()
+
+          version_info['current_version'] = str(new_version)
+
+          with open('version_info.json', 'w') as f:
+              json.dump(version_info, f, indent=2)
+
+          print(f"::set-output name=new_version::v{new_version}")
+        shell: python
 
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
         with:
           tag_name: ${{ steps.update_version.outputs.new_version }}
           release_name: Release ${{ steps.update_version.outputs.new_version }}
@@ -73,14 +81,12 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Update CURRENT_VERSION
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.rest.actions.createOrUpdateRepoVariable({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: 'CURRENT_VERSION',
-              value: '${{ steps.update_version.outputs.new_version }}'
-            })
+      - name: Commit version update
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add version_info.json
+          git commit -m "Bump version to ${{ steps.update_version.outputs.new_version }}"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
