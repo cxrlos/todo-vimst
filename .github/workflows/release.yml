@@ -30,7 +30,7 @@ jobs:
             exit 1
           fi
           
-          LABELS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          LABELS=$(curl -s -H "Authorization: token ${{ secrets.PAT }}" \
             "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" | \
             jq -r '.[].name')
           
@@ -72,7 +72,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
         with:
           tag_name: ${{ steps.update_version.outputs.new_version }}
           release_name: Release ${{ steps.update_version.outputs.new_version }}
@@ -88,3 +88,5 @@ jobs:
           git add version_info.json
           git commit -m "Bump version to ${{ steps.update_version.outputs.new_version }}"
           git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
