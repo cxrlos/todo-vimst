@@ -22,8 +22,8 @@ function M.create_tasks()
   for _, todo in ipairs(todos) do
     local success, result = pcall(api.create_task, todo)
     if success then
-      local priority_str = "P" .. (5 - todo.priority)
-      local labels_str = table.concat(todo.labels, ", ")
+      local priority_str = todo.metadata.priority or "P4"
+      local labels_str = table.concat(todo.metadata.labels, ", ")
       local log_msg = string.format("Task created: %s (Priority: %s", todo.content, priority_str)
       if #todo.labels > 0 then
         log_msg = log_msg .. ", Labels: " .. labels_str
