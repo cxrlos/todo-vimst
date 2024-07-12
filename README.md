@@ -63,10 +63,10 @@ todo-vimst stores your Todoist API token locally using a basic encryption method
 
 2. Start adding TODO comments in your code:
    ```
-   // TODO: Refactor the flux capacitor #P1 #Project:TimeTravel
-   # TODO: Buy plutonium #P2 #Shopping
-   -- TODO: Calibrate speedometer to 88 mph #P3 #Maintenance
-   % TODO: Write memoir: "My Life at 1.21 Gigawatts" #P4 #Personal
+   // TODO: Refactor the flux capacitor @P1 @Project:TimeTravel
+   # TODO: Buy plutonium @P2 @Shopping
+   -- TODO: Calibrate speedometer to 88 mph @P3 @Maintenance
+   % TODO: Write memoir: "My Life at 1.21 Gigawatts" @P4 @Personal
    ```
 
 3. Create tasks from your TODOs:
@@ -77,17 +77,17 @@ todo-vimst stores your Todoist API token locally using a basic encryption method
 
 ## 🏷️ Priorities and Labels
 
-- Use `#P1`, `#P2`, `#P3`, or `#P4` to set task priority (P1 is highest, P4 is lowest)
-- Any other `#Tag` will be added as a label to your task
+- Use `@P1`, `@P2`, `@P3`, or `@P4` to set task priority (P1 is highest, P4 is lowest)
+- Any other `@Tag` will be added as a label to your task
 - No priority tag? No problem! It defaults to P4
 
 ## 🎭 Examples
 
 ```python
-# TODO: Implement time circuits #P1 #Feature
+# TODO: Implement time circuits @P1 @Feature
 # This will create a high-priority task with the "Feature" label
 
-// TODO: Test flux dispersal #P3 #Testing #BackToTheFuture
+// TODO: Test flux dispersal @P3 @Testing @BackToTheFuture
 // This creates a medium-priority task with "Testing" and "BackToTheFuture" labels
 
 -- TODO: Document temporal experiments
@@ -100,7 +100,7 @@ that spans multiple lines
 # This creates a single task with the content "This is a multi-line task that spans multiple lines"
 ```
 
-todo-vimst now supports file type-specific comment parsing, ensuring that the correct comment syntax is used for each programming language. It recognizes common file types such as Python, C, Java, JavaScript, Lua, and more.
+todo-vimst supports file type-specific comment parsing, ensuring that the correct comment syntax is used for each programming language. It recognizes common file types such as Python, C, Java, JavaScript, Lua, and more.
 
 ## 🐛 Troubleshooting
 
