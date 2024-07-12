@@ -68,28 +68,32 @@ local function trim(s)
 end
 
 local function parse_todo(content)
-  local priority = "P4"  -- Default priority
-  local labels = {}
-  
-  -- Extract priority and labels
-  content = content:gsub("#(%S+)", function(tag)
-    if PRIORITY_MAP[tag] then
-      priority = tag
-      return ""
-    else
-      table.insert(labels, tag)
-      return ""
-    end
-  end)
-  
-  -- Clean up the todo text
-  content = content:gsub("%s+", " "):gsub("^%s*(.-)%s*$", "%1")
-  
-  return {
-    content = content,
-    priority = PRIORITY_MAP[priority],
-    labels = labels
+  local task = {
+    content = "",
+    priority = 1,  -- Default priority (P4)
+    labels = {},
+    metadata = {
+      labels = {},
+      priority = nil,
+    }
   }
+
+  -- Extract priority and labels
+  content = content:gsub("@(%S+)", function(tag)
+    if PRIORITY_MAP[tag] then
+      task.priority = PRIORITY_MAP[tag]
+      task.metadata.priority = tag
+    else
+      table.insert(task.labels, tag)
+      table.insert(task.metadata.labels, tag)
+    end
+    return ""
+  end)
+
+  -- Clean up the todo text
+  task.content = content:gsub("%s+", " "):gsub("^%s*(.-)%s*$", "%1")
+
+  return task
 end
 
 function M.parse_current_buffer()
