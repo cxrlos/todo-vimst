@@ -77,9 +77,8 @@ todo-vimst stores your Todoist API token locally using a basic encryption method
 
 ## 🏷️ Priorities and Labels
 
-- Use `#P1`, `#P2`, `#P3`, or `#P4` to set task priority (P1 is highest, P4 is lowest)
-- Any other `#Tag` will be added as a label to your task
-- No priority tag? No problem! It defaults to P4
+- Use `P1`, `P2`, `P3`, or `P4` to set task priority (P1 is highest, P4 is lowest). No priority set? No problem! It defaults to P4
+- Any element `#Tag` will be added as a label to your task
 
 ## 🎭 Examples
 
