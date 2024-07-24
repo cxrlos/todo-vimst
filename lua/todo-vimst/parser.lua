@@ -78,14 +78,14 @@ local function parse_todo(content)
     }
   }
 
-  -- Extract labels (still using @)
+  -- Extract labels
   content = content:gsub("@(%S+)", function(tag)
     table.insert(task.labels, tag)
     table.insert(task.metadata.labels, tag)
     return ""
   end)
 
-  -- Extract priority (without @)
+  -- Extract priority
   content = content:gsub("%s*([Pp][1234])%s*", function(priority)
     local priority_upper = priority:upper()
     task.priority = PRIORITY_MAP[priority_upper]
