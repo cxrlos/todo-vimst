@@ -78,16 +78,19 @@ local function parse_todo(content)
     }
   }
 
-  -- Extract priority and labels
+  -- Extract labels (still using @)
   content = content:gsub("@(%S+)", function(tag)
-    if PRIORITY_MAP[tag] then
-      task.priority = PRIORITY_MAP[tag]
-      task.metadata.priority = tag
-    else
-      table.insert(task.labels, tag)
-      table.insert(task.metadata.labels, tag)
-    end
+    table.insert(task.labels, tag)
+    table.insert(task.metadata.labels, tag)
     return ""
+  end)
+
+  -- Extract priority (without @)
+  content = content:gsub("%s*([Pp][1234])%s*", function(priority)
+    local priority_upper = priority:upper()
+    task.priority = PRIORITY_MAP[priority_upper]
+    task.metadata.priority = priority_upper
+    return " "  -- Replace with a space to avoid words sticking together
   end)
 
   -- Clean up the todo text
