@@ -3,7 +3,7 @@ local uv = vim.loop
 local base64 = require('todo-vimst.base64')
 
 local function get_config_path()
-    return uv.os_homedir() .. '/.todo-vimst.key'
+    return uv.os_homedir() .. '/.todo-vimst/private.key'
 end
 
 local function encrypt(text)

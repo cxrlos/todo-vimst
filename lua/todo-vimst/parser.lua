@@ -1,4 +1,3 @@
--- parser.lua
 local M = {}
 
 local COMMENT_PATTERNS = {
@@ -72,11 +71,18 @@ local function parse_todo(content)
     content = "",
     priority = 1,  -- Default priority (P4)
     labels = {},
+    project = nil,
     metadata = {
       labels = {},
       priority = nil,
     }
   }
+
+  -- Extract project
+  content = content:gsub("#(%S+)", function(project)
+    task.project = project
+    return ""
+  end)
 
   -- Extract labels
   content = content:gsub("@(%S+)", function(tag)
