@@ -63,10 +63,10 @@ todo-vimst stores your Todoist API token locally using a basic encryption method
 
 2. Start adding TODO comments in your code:
    ```
-   // TODO: Refactor the flux capacitor @P1 @Project:TimeTravel
-   # TODO: Buy plutonium @P2 @Shopping
-   -- TODO: Calibrate speedometer to 88 mph @P3 @Maintenance
-   % TODO: Write memoir: "My Life at 1.21 Gigawatts" @P4 @Personal
+   // TODO: Optimize tire management strategy P1 @RacePrep
+   # TODO: Analyze competitor's lap times P2 @Strategy
+   -- TODO: Calibrate DRS activation points P3 @Setup
+   % TODO: Write post-race report P4 @Admin
    ```
 
 3. Create tasks from your TODOs:
@@ -77,20 +77,19 @@ todo-vimst stores your Todoist API token locally using a basic encryption method
 
 ## 🏷️ Priorities and Labels
 
-- Use `@P1`, `@P2`, `@P3`, or `@P4` to set task priority (P1 is highest, P4 is lowest)
-- Any other `@Tag` will be added as a label to your task
-- No priority tag? No problem! It defaults to P4
+- Use `P1`, `P2`, `P3`, or `P4` to set task priority (P1 is highest, P4 is lowest). No priority set? No problem! It defaults to P4
+- Any element `@Label` will be added as a label to your task
 
 ## 🎭 Examples
 
 ```python
-# TODO: Implement time circuits @P1 @Feature
+# TODO: Implement traction control system P1 @Feature
 # This will create a high-priority task with the "Feature" label
 
-// TODO: Test flux dispersal @P3 @Testing @BackToTheFuture
-// This creates a medium-priority task with "Testing" and "BackToTheFuture" labels
+// TODO: Test aerodynamics in wind tunnel P3 @Testing @MP4/4
+// This creates a medium-priority task with "Testing" and "MP4/4" labels
 
--- TODO: Document temporal experiments
+-- TODO: Document tire degradation analysis
 -- This creates a low-priority task (default P4) with no labels
 
 '''
@@ -100,7 +99,7 @@ that spans multiple lines
 # This creates a single task with the content "This is a multi-line task that spans multiple lines"
 ```
 
-todo-vimst supports file type-specific comment parsing, ensuring that the correct comment syntax is used for each programming language. It recognizes common file types such as Python, C, Java, JavaScript, Lua, and more.
+todo-vimst now supports file type-specific comment parsing, ensuring that the correct comment syntax is used for each programming language. It recognizes common file types such as Python, C, Java, JavaScript, Lua, and more.
 
 ## 🐛 Troubleshooting
 
